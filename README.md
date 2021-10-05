@@ -1,3 +1,43 @@
+# Change of Build and Deploy
+
+## Build
+
+I installed docker desktop and grabbed image `amazonlinux`
+
+Then made container and went into it
+
+> docker run -it --name amazon -d amazonlinux  
+> docker exec -it --user root amazon /bin/bash
+
+this puts you into `#`
+
+```
+# yum install updte
+# yum groupinstall "Development Tools"
+# yum install ImageMagick-devel.x86_64
+```
+
+Then `git clone` this repo and build.
+
+======
+
+## Repo Changes
+
+- add freetype
+- add heic/heif/avif
+
+
+## Deploy
+
+Use `docker` to grab the compiled bins:
+
+> docker cp amazon:/opt/bin ./
+
+If symlinks present, those will not copy over...
+
+
+
+
 # ImageMagick for AWS Lambda
 
 Scripts to compile ImageMagick utilities for AWS Lambda instances powered by Amazon Linux 2.x, such as the `nodejs10.x` or `nodejs12.x` or `python 3.8` runtime, and the updated 2018.03 Amazon Linux 1 runtimes. 

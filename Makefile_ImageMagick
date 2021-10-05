@@ -1,10 +1,16 @@
 LIBPNG_VERSION ?= 1.6.37
-LIBJPG_VERSION ?= 9c
+LIBJPG_VERSION ?= 9d
 OPENJP2_VERSION ?= 2.3.1
 LIBTIFF_VERSION ?= 4.0.9
 BZIP2_VERSION ?= 1.0.6
-LIBWEBP_VERSION ?= 0.6.1
-IMAGEMAGICK_VERSION ?= 7.0.8-45
+LIBWEBP_VERSION ?= 1.2.1
+
+LIBHEIF_VERSION ?= 1.12.0
+LIBDE265_VERSION ?= 1.0.8
+LCMS_VERSION ?= 2.12
+LIBFREETYPE_VERSION ?= 2.10.1
+
+IMAGEMAGICK_VERSION ?= 7.1.0-9
 
 TARGET_DIR ?= /opt/
 PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -21,6 +27,35 @@ CONFIGURE = PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
 		--enable-static \
 		--prefix=$(CACHE_DIR)
 
+## libde265
+LIBDE265_SOURCE=libde265-$(LIBDE265_VERSION).tar.gz
+
+$(LIBDE265_SOURCE):
+	curl -LO https://github.com/strukturag/libde265/releases/download/v$(LIBDE265_VERSION)/$(LIBDE265_SOURCE)
+	
+$(CACHE_DIR)/lib/libde265.a: $(LIBDE265_SOURCE)
+	tar xf $<
+	cd libde265*
+	./autogen.sh
+	$(CONFIGURE)
+	make
+	make install
+
+## libheic
+LIBHEIF_SOURCE=libheif-$(LIBHEIF_VERSION).tar.gz
+
+$(LIBHEIF_SOURCE):
+	curl -LO https://github.com/strukturag/libheif/releases/download/v$(LIBHEIF_VERSION)/$(LIBHEIF_SOURCE)
+
+$(CACHE_DIR)/lib/libheif.a: $(LIBHEIF_SOURCE)
+	tar xf $<
+	cd libheif*
+	./autogen.sh
+	$(CONFIGURE)
+	make
+	make install
+
+
 ## libjpg
 
 LIBJPG_SOURCE=jpegsrc.v$(LIBJPG_VERSION).tar.gz
@@ -31,7 +66,7 @@ $(LIBJPG_SOURCE):
 $(CACHE_DIR)/lib/libjpeg.a: $(LIBJPG_SOURCE)
 	tar xf $<
 	cd jpeg*
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
 
@@ -46,11 +81,11 @@ $(LIBPNG_SOURCE):
 $(CACHE_DIR)/lib/libpng.a: $(LIBPNG_SOURCE)
 	tar xf $<
 	cd libpng*
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
 
-# libbz2
+## libbz2
 
 BZIP2_SOURCE=bzip2-$(BZIP2_VERSION).tar.gz
 
@@ -63,7 +98,7 @@ $(CACHE_DIR)/lib/libbz2.a: $(BZIP2_SOURCE)
 	make libbz2.a
 	make install PREFIX=$(CACHE_DIR)
 
-# libtiff
+## libtiff
 
 LIBTIFF_SOURCE=tiff-$(LIBTIFF_VERSION).tar.gz
 
@@ -73,11 +108,11 @@ $(LIBTIFF_SOURCE):
 $(CACHE_DIR)/lib/libtiff.a: $(LIBTIFF_SOURCE) $(CACHE_DIR)/lib/libjpeg.a
 	tar xf $<
 	cd tiff-*
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
 
-# libwebp
+## libwebp
 
 LIBWEBP_SOURCE=libwebp-$(LIBWEBP_VERSION).tar.gz
 
@@ -88,9 +123,25 @@ $(CACHE_DIR)/lib/libwebp.a: $(LIBWEBP_SOURCE)
 	tar xf $<
 	cd libwebp-*
 	sh autogen.sh
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
+
+## lcms2
+
+LCMS_SOURCE=lcms2-$(LCMS_VERSION).tar.gz
+
+$(LCMS_SOURCE):
+	curl -L https://github.com/mm2/Little-CMS/releases/download/lcms$(LCMS_VERSION)/lcms2-$(LCMS_VERSION).tar.gz -o $(LCMS_SOURCE)
+	
+$(CACHE_DIR)/lib/liblcms2.a: $(LCMS_SOURCE)
+	tar xf $<
+	cd lcms2-*
+	sh autogen.sh
+	$(CONFIGURE)
+	make
+	make install
+
 
 ## libopenjp2
 
@@ -113,6 +164,20 @@ $(CACHE_DIR)/lib/libopenjp2.a: $(OPENJP2_SOURCE) $(CACHE_DIR)/lib/libpng.a $(CAC
 	make clean
 	make install
 
+## libfreetype
+
+LIBFREETYPE_SOURCE=freetype-$(LIBFREETYPE_VERSION).tar.xz
+
+$(LIBFREETYPE_SOURCE):
+	curl -LO http://download.savannah.gnu.org/releases/freetype/$(LIBFREETYPE_SOURCE)
+
+$(CACHE_DIR)/lib/libfreetype.a: $(LIBFREETYPE_SOURCE)
+	tar xf $<
+	cd freetype*
+	$(CONFIGURE)
+	make
+	make install
+
 
 ## ImageMagick
 
@@ -127,7 +192,11 @@ LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libopenjp2.a \
 	$(CACHE_DIR)/lib/libtiff.a \
 	$(CACHE_DIR)/lib/libbz2.a \
-	$(CACHE_DIR)/lib/libwebp.a
+	$(CACHE_DIR)/lib/libwebp.a \
+	$(CACHE_DIR)/lib/libfreetype.a \
+	$(CACHE_DIR)/lib/libde265.a \
+	$(CACHE_DIR)/lib/libheif.a \
+	$(CACHE_DIR)/lib/liblcms2.a
 
 $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	tar xf $<
@@ -135,10 +204,12 @@ $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
 		./configure \
 		CPPFLAGS=-I$(CACHE_DIR)/include \
-		LDFLAGS=-L$(CACHE_DIR)/lib \
+		LDFLAGS="-L$(CACHE_DIR)/lib -lstdc++" \
 		--disable-dependency-tracking \
 		--disable-shared \
 		--enable-static \
+		--with-heic=yes \
+		--with-lcms=yes \
 		--prefix=$(TARGET_DIR) \
 		--enable-delegate-build \
 		--without-modules \
