@@ -210,6 +210,8 @@ $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 		--enable-static \
 		--with-heic=yes \
 		--with-lcms=yes \
+		--with-xml=yes \
+		--with-jbig=no \
 		--prefix=$(TARGET_DIR) \
 		--enable-delegate-build \
 		--without-modules \
