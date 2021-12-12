@@ -10,6 +10,8 @@ LIBDE265_VERSION ?= 1.0.8
 LCMS_VERSION ?= 2.12
 LIBFREETYPE_VERSION ?= 2.10.1
 
+LIBXML_VERSION ?= 2.9.12
+
 IMAGEMAGICK_VERSION ?= 7.1.0-17
 
 TARGET_DIR ?= /opt/
@@ -178,6 +180,20 @@ $(CACHE_DIR)/lib/libfreetype.a: $(LIBFREETYPE_SOURCE)
 	make
 	make install
 
+## libxml2
+
+LIBXML2_SOURCE=v$(LIBXML_VERSION).tar.gz
+
+$(LIBXML2_SOURCE):
+	curl -LO https://github.com/GNOME/libxml2/archive/refs/tags/v$(LIBXML_VERSION).tar.gz
+
+$(CACHE_DIR)/lib/libxml2.a: $(LIBXML2_SOURCE)
+	tar xf $<
+	cd libxml*
+	sh autogen.sh
+	$(CONFIGURE)
+	make
+	make install
 
 ## ImageMagick
 
@@ -196,7 +212,8 @@ LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libfreetype.a \
 	$(CACHE_DIR)/lib/libde265.a \
 	$(CACHE_DIR)/lib/libheif.a \
-	$(CACHE_DIR)/lib/liblcms2.a
+	$(CACHE_DIR)/lib/liblcms2.a \
+	$(CACHE_DIR)/lib/libxml2.a
 
 $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	tar xf $<
