@@ -32,4 +32,4 @@ $(CACHE_DIR)/lib/libaom.a: $(LIBAOM_SOURCE)
 	make install
 
 
-all: $(TARGET_DIR)/bin/identify
+all: $(TARGET_DIR)/lib/libaom.a
