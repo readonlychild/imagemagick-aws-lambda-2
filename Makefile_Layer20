@@ -181,35 +181,6 @@ $(CACHE_DIR)/lib/libfreetype.a: $(LIBFREETYPE_SOURCE)
 	make
 	make install
 
-## libxml2
-
-LIBXML2_SOURCE=v$(LIBXML_VERSION).tar.gz
-
-$(LIBXML2_SOURCE):
-	curl -LO https://github.com/GNOME/libxml2/archive/refs/tags/v$(LIBXML_VERSION).tar.gz
-
-$(CACHE_DIR)/lib/libxml2.a: $(LIBXML2_SOURCE)
-	tar xf $<
-	cd libxml*
-	sh autogen.sh
-	$(CONFIGURE)
-	make
-	make install
-
-## zlib 
-
-ZLIB_SOURCE=v$(ZLIB_VERSION).tar.gz
-
-$(ZLIB_SOURCE):
-	curl -LO https://github.com/madler/zlib/archive/refs/tags/v$(ZLIB_VERSION).tar.gz
-
-$(CACHE_DIR)/lib/zlib.a: $(ZLIB_SOURCE)
-	tar xf $<
-	cd zlib*
-	PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig ./configure --includedir=$(CACHE_DIR)/include --static --prefix=$(CACHE_DIR)
-	make
-	make install
-
 ## ImageMagick
 
 IMAGE_MAGICK_SOURCE=ImageMagick-$(IMAGEMAGICK_VERSION).tar.gz
@@ -227,9 +198,7 @@ LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libfreetype.a \
 	$(CACHE_DIR)/lib/libde265.a \
 	$(CACHE_DIR)/lib/libheif.a \
-	$(CACHE_DIR)/lib/liblcms2.a \
-	$(CACHE_DIR)/lib/libxml2.a \
-	$(CACHE_DIR)/lib/zlib.a
+	$(CACHE_DIR)/lib/liblcms2.a
 
 $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	tar xf $<
@@ -243,7 +212,7 @@ $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 		--enable-static \
 		--with-heic=yes \
 		--with-lcms=yes \
-		--with-xml=yes \
+		--with-xml=no \
 		--with-jbig=no \
 		--prefix=$(TARGET_DIR) \
 		--enable-delegate-build \
