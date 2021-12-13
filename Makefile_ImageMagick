@@ -49,10 +49,10 @@ $(CACHE_DIR)/lib/libxml2.a: $(LIBXML2_SOURCE)
 
 ## libaom
 
-LIBAOM_SOURCE=v$(LIBAOM_VERSION).tar.gz
+LIBAOM_SOURCE=libaom-$(LIBAOM_VERSION).tar.gz
 
 $(LIBAOM_SOURCE):
-	curl -L https://aomedia.googlesource.com/aom/+archive/287164de79516c25c8c84fd544f67752c170082a.tar.gz -o aom$(LIBAOM_SOURCE)
+	curl -L https://aomedia.googlesource.com/aom/+archive/287164de79516c25c8c84fd544f67752c170082a.tar.gz -o $(LIBAOM_SOURCE)
 
 $(CACHE_DIR)/lib/libaom.a: $(LIBAOM_SOURCE)
 	tar xf $<
