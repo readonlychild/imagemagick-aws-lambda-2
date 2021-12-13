@@ -232,6 +232,7 @@ LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libbz2.a \
 	$(CACHE_DIR)/lib/libwebp.a \
 	$(CACHE_DIR)/lib/libfreetype.a \
+	$(CACHE_DIR)/lib/libaom.a \
 	$(CACHE_DIR)/lib/libde265.a \
 	$(CACHE_DIR)/lib/libheif.a \
 	$(CACHE_DIR)/lib/liblcms2.a \
