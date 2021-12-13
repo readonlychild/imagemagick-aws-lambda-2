@@ -1,0 +1,35 @@
+LIBAOM_VERSION ?= 3.2.0
+
+TARGET_DIR ?= /opt/
+PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+CACHE_DIR=$(PROJECT_ROOT)build/cache
+
+.ONESHELL:
+
+CONFIGURE = PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
+	./configure \
+		CPPFLAGS=-I$(CACHE_DIR)/include \
+		LDFLAGS=-L$(CACHE_DIR)/lib \
+		--disable-dependency-tracking \
+		--disable-shared \
+		--enable-static \
+		--prefix=$(CACHE_DIR)
+
+
+## libaom
+
+LIBAOM_SOURCE=v$(LIBAOM_VERSION).tar.gz
+
+$(LIBAOM_SOURCE):
+	curl -L https://aomedia.googlesource.com/aom/+archive/287164de79516c25c8c84fd544f67752c170082a.tar.gz -o aom$(LIBAOM_SOURCE)
+
+$(CACHE_DIR)/lib/libaom.a: $(LIBAOM_SOURCE)
+	tar xf $<
+	mkdir build_aom
+	cd build_aom
+	cmake3 ../ -DENABLE_TESTS=0 -DBUILD_SHARED_LIBS=1
+	make
+	make install
+
+
+all: $(TARGET_DIR)/bin/identify
