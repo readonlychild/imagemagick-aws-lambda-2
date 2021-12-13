@@ -12,12 +12,31 @@ Then made container and went into it
 this puts you into `#`
 
 ```
-# yum install updte
+# yum install update
 # yum groupinstall "Development Tools"
-# yum install ImageMagick-devel.x86_64
 ```
 
-Then `git clone` this repo and build.
+Refer to [Readme-ROC](README-ROC.md) to see further VM setup.
+
+After successful build following [Readme-ROC](README-ROC.md), I modified the Makefile_ImageMagick to add xml support and got it to successfully work on Lambda.
+
+The additional install needed to make `xml` work was 
+
+`yum install python3`
+
+after this, `make all -f Makefile_ImageMagick` worked.
+
+Just start over by removing the env like
+
+```
+cd /
+rm -r ima<tab>
+```
+ and clone again and `make all -f Makefile_ImageMagick`  
+ should work.
+
+ Documented this as `Layer39` in [Readme-ROC](README-ROC.md)
+ 
 
 ======
 

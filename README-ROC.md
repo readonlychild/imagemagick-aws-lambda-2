@@ -1,6 +1,6 @@
 # ImageMagick Lambda Layer for Amazon Linux 2 AMIs
 
-## Stpes for Makefile_Layer20
+## Steps for Makefile_Layer20
 
 On Docker Desktop, get image
 
@@ -25,5 +25,29 @@ make all -f Makefile_Layer20
 
 * This build does not support clippingPath (missing xml)  
 * This build does not support avif
+
+
+
+<pre>
+bash-4.2# /opt/bin/magick --version
+Version: ImageMagick 7.1.0-17 Q16-HDRI x86_64 2021-11-21 https://imagemagick.org
+Copyright: (C) 1999-2021 ImageMagick Studio LLC
+License: https://imagemagick.org/script/license.php
+Features: Cipher DPC HDRI
+Delegates (built-in): bzlib freetype heic jng jp2 jpeg lcms png tiff webp zlib
+Compiler: gcc (7.3)
+</pre>
+
+
+## Steps for Makefile_Layer39
+
+Same as Layer20, but before `make`, install python3:
+
+`yum install python3`  
+`make all -f Makefile_Layer39`
+
+====
+
+Now need to figure out `avif` support
 
 
