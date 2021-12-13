@@ -12,6 +12,7 @@ LIBFREETYPE_VERSION ?= 2.10.1
 
 LIBXML_VERSION ?= 2.9.12
 ZLIB_VERSION ?= 1.2.9
+LIBAOM_VERSION ?= 3.2.0
 
 IMAGEMAGICK_VERSION ?= 7.1.0-17
 
@@ -43,6 +44,21 @@ $(CACHE_DIR)/lib/libxml2.a: $(LIBXML2_SOURCE)
 	cd libxml*
 	sh autogen.sh
 	$(CONFIGURE)
+	make
+	make install
+
+## libaom
+
+LIBAOM_SOURCE=v$(LIBAOM_VERSION).tar.gz
+
+$(LIBAOM_SOURCE):
+	curl -L https://aomedia.googlesource.com/aom/+archive/287164de79516c25c8c84fd544f67752c170082a.tar.gz -o aom$(LIBAOM_SOURCE)
+
+$(CACHE_DIR)/lib/libaom.a: $(LIBAOM_SOURCE)
+	tar xf $<
+	mkdir build_aom
+	cd build_aom
+	cmake3 ../ -DENABLE_TESTS=0 -DBUILD_SHARED_LIBS=1
 	make
 	make install
 
