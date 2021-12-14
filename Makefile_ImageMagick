@@ -58,9 +58,10 @@ $(CACHE_DIR)/lib/libaom.a: $(LIBAOM_SOURCE)
 	tar xf $<
 	mkdir build_aom
 	cd build_aom
-	cmake3 ../ -DENABLE_TESTS=0 -DBUILD_SHARED_LIBS=1
+	cmake3 ../ -DENABLE_TESTS=0 -DBUILD_SHARED_LIBS=1 -DCONFIG_AV1_ENCODER=1
 	make
 	make install
+	cp libaom.a $(CACHE_DIR)/lib/libaom.a
 
 
 ## libde265
@@ -226,6 +227,7 @@ $(IMAGE_MAGICK_SOURCE):
 
 
 LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
+	$(CACHE_DIR)/lib/libxml2.a \
 	$(CACHE_DIR)/lib/libpng.a \
 	$(CACHE_DIR)/lib/libopenjp2.a \
 	$(CACHE_DIR)/lib/libtiff.a \
@@ -235,8 +237,8 @@ LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libaom.a \
 	$(CACHE_DIR)/lib/libde265.a \
 	$(CACHE_DIR)/lib/libheif.a \
-	$(CACHE_DIR)/lib/liblcms2.a \
-	$(CACHE_DIR)/lib/libxml2.a
+	$(CACHE_DIR)/lib/liblcms2.a
+	
 
 $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	tar xf $<
