@@ -65,8 +65,10 @@ $(CACHE_DIR)/lib/libxml2.a: $(LIBXML2_SOURCE)
 
 #### dav1d
 
+DAV1D_SOURCE=dav1d.git
+
 $(DAV1D_SOURCE):
-	git clone https://github.com/videolan/dav1d.git
+	git clone https://github.com/videolan/$(DAV1D_SOURCE)
 
 $(CACHE_DIR)/lib/dav1d.a: $(DAV1D_SOURCE)
 	cd dav1d
